@@ -3,14 +3,37 @@ import items from "./data";
 const RoomContext = React.createContext();
 
 class RoomProvider extends Component {
-  state = {
-    rooms: [],
-    sortedRooms: [],
-    featuredRooms: [],
-    loading: true,
+  constructor(props) {
+    super(props)
+    this.state = {
+      rooms: [],
+      sortedRooms: [],
+      featuredRooms: [],
+      loading: true,
+    }
   }
+  
 
-  componentDidMount() {
+  // componentDidMount() {
+  //   let rooms = this.formatData(items);
+  //   let featuredRooms = rooms.filter(room => room.featured === true);
+  //   // this.setState((prevState) => ({
+  //   //   rooms: prevState.rooms,
+  //   //   sortedRooms: prevState.rooms,
+  //   //   featuredRooms: prevState.featuredRooms,
+  //   //   loading: !prevState.loading
+
+  //   // }))
+  //   this.setState({
+  //     rooms,
+  //     featuredRooms,
+  //     sortedRooms: rooms,
+  //     loading: false,
+  //   })
+  //   console.log("run context")
+  // }
+
+  componentWillMount() {
     let rooms = this.formatData(items);
     let featuredRooms = rooms.filter(room => room.featured === true);
     this.setState({
@@ -19,6 +42,7 @@ class RoomProvider extends Component {
       sortedRooms: rooms,
       loading: false,
     })
+    console.log("run context")
   }
 
   formatData(items) {
