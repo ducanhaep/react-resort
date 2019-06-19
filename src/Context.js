@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
 import items from "./data";
-const RoomContext = React.createContext();
+import Client from './Contentful';
+import { async } from 'q';
 
+
+const RoomContext = React.createContext();
 class RoomProvider extends Component {
   constructor(props) {
     super(props)
@@ -42,20 +45,46 @@ class RoomProvider extends Component {
   //   console.log("run context")
   // }
 
+  getData = async () => {
+    try {
+      let response = await Client.getEntries({
+        content_type: "beachResortRoom",
+        order: "fields.price"
+      });
+      let rooms = this.formatData(response.items);
+      let featuredRooms = rooms.filter(room => room.featured === true);
+      let maxPrice = Math.max(...rooms.map(item => item.price));
+      let maxSize = Math.max(...rooms.map(item => item.size));
+      this.setState({
+        rooms,
+        featuredRooms,
+        sortedRooms: rooms,
+        loading: false,
+        price: maxPrice,
+        maxPrice: maxPrice,
+        maxSize: maxSize,
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   componentWillMount() {
-    let rooms = this.formatData(items);
-    let featuredRooms = rooms.filter(room => room.featured === true);
-    let maxPrice = Math.max(...rooms.map(item => item.price));
-    let maxSize = Math.max(...rooms.map(item => item.size));
-    this.setState({
-      rooms,
-      featuredRooms,
-      sortedRooms: rooms,
-      loading: false,
-      price: maxPrice,
-      maxPrice: maxPrice,
-      maxSize: maxSize,
-    })
+    // let rooms = this.formatData(items);
+    // let featuredRooms = rooms.filter(room => room.featured === true);
+    // let maxPrice = Math.max(...rooms.map(item => item.price));
+    // let maxSize = Math.max(...rooms.map(item => item.size));
+    // this.setState({
+    //   rooms,
+    //   featuredRooms,
+    //   sortedRooms: rooms,
+    //   loading: false,
+    //   price: maxPrice,
+    //   maxPrice: maxPrice,
+    //   maxSize: maxSize,
+    // })
+
+    this.getData();
   }
 
   formatData(items) {
